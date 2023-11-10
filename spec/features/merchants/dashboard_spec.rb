@@ -139,5 +139,35 @@ RSpec.describe "Dashboard" do
     # Where I see all of my bulk discounts including their
     # percentage discount and quantity thresholds
     # And each bulk discount listed includes a link to its show page
+
+    @customer0 = Customer.create(first_name: "Angus", last_name: "Turing")
+    @invoice0 = @customer0.invoices.create(status: 1)
+
+    @item2 = @merchant1.items.create(name: "Bat", description: "Bat", unit_price: 200)
+    @item3 = @merchant1.items.create(name: "Cat", description: "Cat", unit_price: 300)
+    @item4 = @merchant1.items.create(name: "Rat", description: "Rat", unit_price: 400)
+
+    @transaction0 = @invoice0.transactions.create(credit_card_number: 1234, credit_card_expiration_date: 01/11, result: 1)
+
+    @ii1 = create(:invoice_item, item: @item2, invoice: @invoice0, status: 0)
+    @ii2 = create(:invoice_item, item: @item3, invoice: @invoice0, status: 1)
+    @ii3 = create(:invoice_item, item: @item4, invoice: @invoice0, status: 2)
+
+    @discount1 = @merchant1.discounts.create(name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00)
+    @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00)
+
+    visit "/merchants/#{@merchant1.id}/dashboard"
+    expect(page).to have_link("Merchant Discounts")
+    click_link("Merchant Discounts")
+    save_and_open_page
+    expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts")
+    expect(page).to have_content("Discount Name: #{@discount1.name}")
+    expect(page).to have_content("Percentage Discount: #{@discount1.percentage_discount}")
+    expect(page).to have_content("Quantity Threshold: #{@discount1.quantity_threshold} Items")
+    expect(page).to have_content("Discount Name: #{@discount2.name}")
+    expect(page).to have_content("Percentage Discount: #{@discount2.percentage_discount}")
+    expect(page).to have_content("Quantity Threshold: #{@discount2.quantity_threshold} Items")
+    expect(page).to have_link(@discount1.name)
+    expect(page).to have_link(@discount2.name)
   end
 end
