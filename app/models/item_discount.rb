@@ -1,4 +1,4 @@
-class InvoiceItem < ApplicationRecord
+class ItemDiscount < ApplicationRecord
   belongs_to :discount
   belongs_to :item
  
