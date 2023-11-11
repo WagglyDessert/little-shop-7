@@ -159,7 +159,6 @@ RSpec.describe "Dashboard" do
     visit "/merchants/#{@merchant1.id}/dashboard"
     expect(page).to have_link("Merchant Discounts")
     click_link("Merchant Discounts")
-    save_and_open_page
     expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts")
     expect(page).to have_content("Discount Name: #{@discount1.name}")
     expect(page).to have_content("Percentage Discount: #{@discount1.percentage_discount}")
