@@ -29,4 +29,26 @@ RSpec.describe InvoiceItem, type: :model do
       expect(testing_invoice.price).to eq(25.99)
     end
   end
+
+  describe '#applied_discount' do
+    it 'shows applied discount for an invoice_item' do
+      test_data_2
+      @invoice_item17 = InvoiceItem.create(item_id: @item8.id, invoice_id: @invoice3.id, quantity: 10, unit_price: 3, status: 2)
+      @invoice_item18 = InvoiceItem.create(item_id: @item7.id, invoice_id: @invoice3.id, quantity: 22, unit_price: 5, status: 2)
+
+      @discount1 = @merchant1.discounts.create(name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00)
+      @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00)
+      @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
+
+      expected_discount_for_invoice_item_1 = nil
+      expected_discount_for_invoice_item_2 = @discount3
+      expected_discount_for_invoice_item_17 = @discount1
+      expected_discount_for_invoice_item_18 = @discount2
+
+      expect(@invoice_item1.discount_applied).to eq(expected_discount_for_invoice_item_1)
+      expect(@invoice_item2.discount_applied).to eq(expected_discount_for_invoice_item_2)
+      expect(@invoice_item17.discount_applied).to eq(expected_discount_for_invoice_item_17)
+      expect(@invoice_item18.discount_applied).to eq(expected_discount_for_invoice_item_18)
+    end
+  end
 end
