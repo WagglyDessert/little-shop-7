@@ -1,0 +1,10 @@
+<%= form_with model: [@merchant, @discount], url: merchant_discounts_path(@merchant), method: :post, local: true do |form| %>
+  <%= form.label :name %>
+  <%= form.text_field :name %>
+  <%= form.label :quantity_threshold %>
+  <%= form.text_field :quantity_threshold %>
+  <%= form.label :percentage_discount %>
+  <%= form.text_field :percentage_discount %>
+
+  <%= form.submit "Submit Form" %>
+<% end %>

@@ -31,15 +31,18 @@ RSpec.describe "Dashboard" do
       # Then I am redirected back to the bulk discount index
       # And I see my new bulk discount listed
       visit "/merchants/#{@merchant1.id}/discounts"
-      expect(page).to have_link("Create a New Discount")
-      click_link("Create a New Discount")
-      expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts")
-      fill_out form: with, name: "Bulk Discount C", quantity_threshold: 30, percentage_discount: 30.00
-      click_link("Submit Form")
+      expect(page).to have_link("Create New Discount")
+      click_link("Create New Discount")
+      expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts/new")
+
+      fill_in 'Name', with: 'Bulk Discount C'
+      fill_in 'Quantity threshold', with: 30
+      fill_in 'Percentage discount', with: 30.00
+      click_button("Submit Form")
       expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts")
       expect(page).to have_content("Bulk Discount C")
+      expect(page).to have_content("Percentage Discount: 30.0%")
       expect(page).to have_content("Quantity Threshold: 30 Items")
-      expect(page).to have_content("Percentage Discount: 30.00%")
     end
   end
 end

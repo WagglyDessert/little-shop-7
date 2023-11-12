@@ -3,5 +3,7 @@
     <p>Discount Name: <%= d.name %></p>
     <p>Percentage Discount: <%= d.percentage_discount %>%</p>
     <p>Quantity Threshold: <%= d.quantity_threshold %> Items</p>
-    <p>Click Here For More Information About <%= link_to d.name, "/merchants/#{@merchant.id}/discounts/#{d.id}" %></p><br>
+    <p>Click Here For More Information About <%= link_to d.name, merchant_discount_path(@merchant, d) %></p><br>
   <% end %>
+
+  <%= link_to "Create New Discount", new_merchant_discount_path(@merchant) %>
