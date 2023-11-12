@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Dashboard" do
+RSpec.describe "MerchantDiscounts" do
   before :each do
     test_data 
     @customer0 = Customer.create(first_name: "Angus", last_name: "Turing")

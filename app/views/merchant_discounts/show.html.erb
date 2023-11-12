@@ -2,3 +2,5 @@
 <p>Discount Name: <%= @discount.name %></p>
 <p>Percentage Discount: <%= @discount.percentage_discount %>%</p>
 <p>Quantity Threshold: <%= @discount.quantity_threshold %> Items</p>
+
+<%= link_to "Edit #{@discount.name}", edit_merchant_discount_path(@discount.merchant, @discount) %>
