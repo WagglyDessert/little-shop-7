@@ -42,11 +42,11 @@ RSpec.describe "Admin Invoices Show" do
   ## USER STORY 35
   it "displays the total potential revenue of the invoice" do
     visit "/admin/invoices/#{@test_invoice.id}"
-    expected_total = 0
+    expected_total = 0.00
     @test_invoice.invoice_items.each do |ii|
-      expected_total+=(ii.unit_price * ii.quantity)
+      expected_total += (ii.unit_price * ii.quantity * 0.01)
     end
-    expected_total = (0.01 * expected_total)
+    
     expect(page).to have_content("Total Potential Revenue: $#{expected_total.round(2)}")
   end
 
@@ -81,4 +81,20 @@ RSpec.describe "Admin Invoices Show" do
     expect(page).to have_content("Cancelled")
   end
 
+  it "shows total revenue from invoice w/o discount and total discounted revenue" do
+    # 8: Admin Invoice Show Page: Total Revenue and Discounted Revenue
+    # As an admin
+    # When I visit an admin invoice show page
+    # Then I see the total revenue from this invoice (not including discounts)
+    # And I see the total discounted revenue from this invoice which includes bulk discounts in the calculation
+    visit "/admin/invoices/#{@test_invoice.id}"
+    expected_total = 0.00
+    @test_invoice.invoice_items.each do |ii|
+      expected_total += (ii.unit_price * ii.quantity * 0.01)
+    end
+    expected_discounted_total = @test_invoice.total_revenue_after_discount
+    
+    expect(page).to have_content("Total Potential Revenue: $#{expected_total.round(2)}")
+    expect(page).to have_content("Total Potential Revenue After Applying Discounts: $#{expected_discounted_total}")
+  end
 end

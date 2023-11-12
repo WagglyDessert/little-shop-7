@@ -18,6 +18,7 @@
 
   <b> Created on: </b> <%= @invoice.format_date %><br>
   <h4>Total Potential Revenue: <%= number_to_currency(@invoice.potential_revenue) %></h4>
+  <h4><b><p>Total Potential Revenue After Applying Discounts: <%= number_to_currency(@invoice.total_revenue_after_discount, unit: "$") %></p></b></h4>
   <h3> <b>Customer Name: </b> <%= @invoice.customer.name %><br></h3>
 
   <h3>Items on this Invoice:</h3>
