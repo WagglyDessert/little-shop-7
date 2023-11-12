@@ -31,6 +31,7 @@
       <th>Unit Price</th>
       <th>Status</th>
       <th>Status Change</th>
+      <th>Discount Applied</th>
     </tr>
     <% @invoice.items.each do |item| %>
       <% item.invoice_items.each do |ii| %>
@@ -47,6 +48,11 @@
               <%= f.select :status_update, ["pending", "packaged", "shipped"], selected: ii.status %>
               <%= f.submit "Update Item Status" %>
             <% end %></td>
+            <% if ii.discount_applied.present? %>
+              <td><%= link_to ii.discount_applied.name, "/merchants/#{@merchant.id}/discounts/#{ii.discount_applied.id}" %></td>
+            <% else %>
+             <td></td>
+            <% end %>
           </tr>
         <% end %>
       <% end %>

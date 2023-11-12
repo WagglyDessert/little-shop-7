@@ -13,4 +13,15 @@ class InvoiceItem < ApplicationRecord
     (unit_price * 0.01).round(2)
   end
 
+  def discount_applied
+    discounts = self.item.merchant.discounts.sort_by(&:percentage_discount)
+    if self.item.merchant.discounts.present?
+      discounts.each do |d|
+        if self.quantity >= d.quantity_threshold
+          @discount_applied = d
+        end
+      end
+      @discount_applied
+    end
+  end
 end
