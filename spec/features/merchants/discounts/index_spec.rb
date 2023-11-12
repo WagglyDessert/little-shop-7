@@ -3,10 +3,7 @@ require "rails_helper"
 RSpec.describe "Dashboard" do
   before :each do
     test_data 
-  end
-  describe "discounts index" do
-    it "US1: shows the name of the merchant" do
-      @customer0 = Customer.create(first_name: "Angus", last_name: "Turing")
+    @customer0 = Customer.create(first_name: "Angus", last_name: "Turing")
       @invoice0 = @customer0.invoices.create(status: 1)
 
       @item2 = @merchant1.items.create(name: "Bat", description: "Bat", unit_price: 200)
@@ -21,6 +18,9 @@ RSpec.describe "Dashboard" do
 
       @discount1 = @merchant1.discounts.create(name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00)
       @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00)
+  end
+  describe "discounts index" do
+    it "has links to make a new discount" do
       # 2: Merchant Bulk Discount Create
       # As a merchant
       # When I visit my bulk discounts index
@@ -43,6 +43,21 @@ RSpec.describe "Dashboard" do
       expect(page).to have_content("Bulk Discount C")
       expect(page).to have_content("Percentage Discount: 30.0%")
       expect(page).to have_content("Quantity Threshold: 30 Items")
+    end
+    it "has button to delete a discount" do
+      # 3: Merchant Bulk Discount Delete
+      # As a merchant
+      # When I visit my bulk discounts index
+      # Then next to each bulk discount I see a button to delete it
+      # When I click this button
+      # Then I am redirected back to the bulk discounts index page
+      # And I no longer see the discount listed
+      visit "/merchants/#{@merchant1.id}/discounts"
+      expect(page).to have_button("Delete #{@discount1.name}")
+      click_button("Delete #{@discount1.name}")
+      expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts")
+      expect(page).to have_content("Bulk Discount B")
+      expect(page).to_not have_content("Bulk Discount A")
     end
   end
 end

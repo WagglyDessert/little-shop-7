@@ -3,7 +3,8 @@
     <p>Discount Name: <%= d.name %></p>
     <p>Percentage Discount: <%= d.percentage_discount %>%</p>
     <p>Quantity Threshold: <%= d.quantity_threshold %> Items</p>
-    <p>Click Here For More Information About <%= link_to d.name, merchant_discount_path(@merchant, d) %></p><br>
+    <p>Click Here For More Information About <%= link_to d.name, merchant_discount_path(@merchant, d) %></p>
+    <p><%= button_to "Delete #{d.name}", merchant_discount_path(@merchant, d), method: :delete %></p><br>
   <% end %>
 
   <%= link_to "Create New Discount", new_merchant_discount_path(@merchant) %>
