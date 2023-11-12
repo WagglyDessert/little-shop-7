@@ -45,7 +45,7 @@ RSpec.describe "Dashboard" do
       expect(page).to have_content("Quantity Threshold: 30 Items")
     end
     it "has button to delete a discount" do
-      # 3: Merchant Bulk Discount Delete
+      # SP3: Merchant Bulk Discount Delete
       # As a merchant
       # When I visit my bulk discounts index
       # Then next to each bulk discount I see a button to delete it
