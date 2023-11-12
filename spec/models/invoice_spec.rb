@@ -70,4 +70,46 @@ RSpec.describe Invoice, type: :model do
       expect(Invoice.sort_by_date).to eq(order)
     end
   end 
+
+  describe "#potential_revenue_after_discounts" do
+    it "should return the total potential revenue of that invoice after discounts are applied" do 
+      test_data_2
+      @test_invoice = @customer2.invoices.first
+      @test_invoice.update(status: 0, created_at: Time.new(2021, 12, 30))
+      
+      @discount1 = @merchant1.discounts.create(name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00)
+      @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00)
+      @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
+      
+      #this tests that different discounts are applied to different items
+      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01 * ((100.0 - @discount2.percentage_discount) / 100)) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01 * ((100.0 - @discount3.percentage_discount) / 100))).round(2)
+      expect(@test_invoice.total_revenue_after_discount).to eq(expected_total)
+    end
+    it "tests that total_revenue_after_discounts works when there are no discounts" do 
+      test_data_2
+      @test_invoice = @customer2.invoices.first
+      @test_invoice.update(status: 0, created_at: Time.new(2021, 12, 30))
+      
+      #this tests no discounts 
+      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01)).round(2)
+      expect(@test_invoice.total_revenue_after_discount).to eq(expected_total)
+    end
+    it "tests that the total_revenue_after_discounts does not discount purchased items that belong to another merchant who does not have a discount" do 
+      test_data_2
+      @test_invoice = @customer2.invoices.first
+      @test_invoice.update(status: 0, created_at: Time.new(2021, 12, 30))
+      
+      @merchant2 = create(:merchant, name: "Discountless")
+      @item8 = create(:item, name: "crystal shard", description: "beautiful", unit_price: 1000, merchant_id: @merchant2.id)
+      @invoice_item17 = InvoiceItem.create(item_id: @item8.id, invoice_id: @invoice2.id, quantity: 100, unit_price: 1000, status: 1)
+
+      @discount1 = @merchant1.discounts.create(name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00)
+      @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00)
+      @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
+      
+      #this tests that buying an item that belongs to a merchant without discounts will not apply a discount to the item when other items are bought from a merchant that gives discounts
+      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01 * ((100.0 - @discount2.percentage_discount) / 100)) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01 * ((100.0 - @discount3.percentage_discount) / 100)) + (@invoice_item17.unit_price * @invoice_item17.quantity * 0.01)).round(2)
+      expect(@test_invoice.total_revenue_after_discount).to eq(expected_total)
+    end
+  end 
 end

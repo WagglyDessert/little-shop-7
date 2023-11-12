@@ -13,6 +13,7 @@
 <b><p>Invoice Date: <%= @invoice.created_at.strftime('%A, %B %d, %Y') %></p></b>
 
 <h3><b><p>Total Revenue: <%= number_to_currency(@invoice.potential_revenue, unit: "$") %></p></b></h3>
+<h3><b><p>Total Revenue After Applying Discounts: <%= number_to_currency(@invoice.total_revenue_after_discount, unit: "$") %></p></b></h3>
 
 <h3>Items on this Invoice:</h3>
 
