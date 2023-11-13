@@ -124,6 +124,7 @@ RSpec.describe 'merchant invoices index page (/merchants/:merchant_id/invoices)'
       # Then I see the total revenue for my merchant from this invoice (not including discounts)
       # And I see the total discounted revenue for my merchant from this invoice which includes bulk discounts in the calculation
       visit "/merchants/#{@merchant1.id}/invoices/#{@invoice1.id}"
+      #save_and_open_page
       expect(page).to have_content("Total Revenue")
       expect(page).to have_content("$414.17")
       expect(page).to have_content("Total Revenue After Applying Discounts")

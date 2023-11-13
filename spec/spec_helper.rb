@@ -190,6 +190,7 @@ def test_data_4
   @discount1 = create(:discount, name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00, merchant_id: @merchant1.id)
   @discount2 = create(:discount, name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00, merchant_id: @merchant1.id)
   @discount3 = create(:discount, name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00, merchant_id: @merchant1.id)
+  @discount4 = @merchant1.discounts.create(:discount, name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
 
   @item1 = create(:item, name: "hat", description: "cool hat", unit_price: 10, merchant_id: @merchant1.id)
   @item2 = create(:item, name: "straw", description: "it is for drinking", unit_price: 1, merchant_id: @merchant1.id)
