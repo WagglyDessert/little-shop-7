@@ -33,48 +33,47 @@ class Invoice < ApplicationRecord
     Invoice.all.order(created_at: :desc)
   end
   
-  def total_revenue_after_discount
-    @merchant_array = []
-    @discounts = []
-    items.each do |i|
-      @merchant_array << i.merchant
-    end
-    @merchant_array.uniq.each do |m|
-      if m.discounts.present?
-        @discounts << m.discounts
-      end
-    end
-    require 'pry'; binding.pry
-    if @discounts != nil
-      items_with_discounts = Discount
-          .joins(merchant: { items: :invoice_items })
-          .where('invoice_items.invoice_id' => self.id)
-          .where('invoice_items.quantity >= quantity_threshold')
-          .order('discounts.id DESC')
-          .select('discounts.*, invoice_items.*')
-          .sum("invoice_items.unit_price * quantity * 0.01 * ((100.00 - percentage_discount)/100)")
+  # def total_revenue_after_discount
+  #   @merchant_array = []
+  #   @discounts = []
+  #   items.each do |i|
+  #     @merchant_array << i.merchant
+  #   end
+  #   @merchant_array.uniq.each do |m|
+  #     if m.discounts.present?
+  #       @discounts << m.discounts
+  #     end
+  #   end
+  #   require 'pry'; binding.pry
+  #   if @discounts != nil
+  #     items_with_discounts = Discount
+  #         .joins(merchant: { items: :invoice_items })
+  #         .where('invoice_items.invoice_id' => self.id)
+  #         .where('invoice_items.quantity >= quantity_threshold')
+  #         .order('discounts.id DESC')
+  #         .select('discounts.*, invoice_items.*')
+  #         .sum("invoice_items.unit_price * quantity * 0.01 * ((100.00 - percentage_discount)/100)")
 
-        items_without_discounts = Discount
-          .joins(merchant: { items: :invoice_items })
-          .where('invoice_items.invoice_id' => self.id)
-          .where('discounts.quantity_threshold = (SELECT MIN(quantity_threshold) FROM discounts)')
-          .where('invoice_items.quantity < quantity_threshold')
-          .select('discounts.*, invoice_items.quantity, invoice_items.unit_price')
-          .sum("invoice_items.unit_price * quantity * 0.01")
+  #       items_without_discounts = Discount
+  #         .joins(merchant: { items: :invoice_items })
+  #         .where('invoice_items.invoice_id' => self.id)
+  #         .where('discounts.quantity_threshold = (SELECT MIN(quantity_threshold) FROM discounts)')
+  #         .where('invoice_items.quantity < quantity_threshold')
+  #         .select('discounts.*, invoice_items.quantity, invoice_items.unit_price')
+  #         .sum("invoice_items.unit_price * quantity * 0.01")
           
-        total = 0.00
-        total += items_without_discounts
-        total += items_with_discounts
-    else
-      self.invoice_items.each do |ii|
-        total = (ii.unit_price * ii.quantity * 0.01)
-        total.round(2)
-      end
-    end
-  end
+  #       total = 0.00
+  #       total += items_without_discounts
+  #       total += items_with_discounts
+  #   else
+  #     self.invoice_items.each do |ii|
+  #       total = (ii.unit_price * ii.quantity * 0.01)
+  #       total.round(2)
+  #     end
+  #   end
+  # end
 
-  #IM LEAVING THIS METHOD TO SHOW ALTERNATE SOLUTION
-  def total_revenue_after_discount_2
+  def total_revenue_after_discount
     total = 0.00
     invoice_items.each do |ii|
       #reset number_d and number
