@@ -42,14 +42,6 @@ class Invoice < ApplicationRecord
       .select('discounts.*, invoice_items.*')
       .sum("invoice_items.unit_price * quantity * 0.01 * ((100.00 - percentage_discount)/100)")
 
-      # original_price = Discount
-      # .joins(merchant: { items: :invoice_items })
-      # .where('invoice_items.invoice_id' => self.id)
-      # .where('invoice_items.quantity >= quantity_threshold')
-      # .order('discounts.id DESC')
-      # .select('discounts.*, invoice_items.*')
-      # .sum("invoice_items.unit_price * quantity * 0.01")
-
     items_without_discounts = Discount
       .joins(merchant: { items: :invoice_items })
       .where('invoice_items.invoice_id' => self.id)
@@ -57,43 +49,14 @@ class Invoice < ApplicationRecord
       .where('invoice_items.quantity < quantity_threshold')
       .select('discounts.*, invoice_items.quantity, invoice_items.unit_price')
       .sum("invoice_items.unit_price * quantity * 0.01")
-
-    # items_with_discounts_3 = Discount
-    #   .joins(merchant: { items: :invoice_items })
-    #   .where('invoice_items.invoice_id' => self.id)
-    #   .where('invoice_items.quantity < quantity_threshold')
-    #   .order('discounts.id DESC')
-    #   .select('discounts.*, invoice_items.*')
-    #   .sum("invoice_items.unit_price * quantity * 0.01")
-
-    # items_without_discounts_2 = Item
-    #   .joins(merchant: :discounts)
-    #   .distinct
-    #   .joins(:invoice_items)
-    #   .where("invoice_items.invoice_id = #{self.id}")
-    #   .sum("invoice_items.unit_price * quantity * 0.01")
-         
       
-    #require 'pry'; binding.pry
-
     total = 0.00
     total += items_without_discounts
     total += items_with_discounts
-
-    # item_ids_array.each do |item_id|
-    #   item_with_discount = items_with_discounts.find_all { |item| item.item_id == item_id }
-
-    #   if item_with_discount && item_with_discount.quantity >= item_with_discount.quantity_threshold
-    #     percentage_discount = item_with_discount.percentage_discount
-    #     total += (item_with_discount.unit_price * item_with_discount.quantity * 0.01 * (100.0 - percentage_discount) / 100.0)
-    #   else
-    #     total += (item_with_discount.unit_price * item_with_discount.quantity * 0.01)
-    #   end
-    # end
     total.round(2)
   end
 
-
+  #IM LEAVING THIS METHOD TO SHOW ALTERNATE SOLUTION
   def total_revenue_after_discount_2
     total = 0.00
     invoice_items.each do |ii|
@@ -129,22 +92,5 @@ class Invoice < ApplicationRecord
     total.round(2)   
   end
 
-  def alternate
-    self.items
-    .joins(merchant: :discounts)
-    .joins(:invoice_items)
-    .where('invoice_items.invoice_id' => self.id)
-    .order('discounts.id DESC')
-    .select('discounts.percentage_discount, invoice_items.quantity, discounts.quantity_threshold, items.*')
-
-
-    # SELECT discounts.*, invoice_items.*
-    # FROM items
-    # INNER JOIN invoice_items ON items.id = invoice_items.item_id
-    # INNER JOIN merchants ON merchants.id = items.merchant_id
-    # INNER JOIN discounts ON discounts.merchant_id = merchants.id
-    # WHERE invoice_items.invoice_id = 294
-    # ORDER BY discounts.id desc;
-  end
 end
 

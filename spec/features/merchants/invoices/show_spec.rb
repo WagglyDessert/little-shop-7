@@ -117,9 +117,7 @@ RSpec.describe 'merchant invoices index page (/merchants/:merchant_id/invoices)'
       expect(@invoice_item1.status).to eq("pending")
     end
     it 'shows total revenue for merchant not including discount and a discounted revenue' do
-      @discount1 = @merchant1.discounts.create(name: "Bulk Discount A", quantity_threshold: 10, percentage_discount: 10.00)
-      @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00)
-      @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
+      test_data_4
       # 6: Merchant Invoice Show Page: Total Revenue and Discounted Revenue
       # As a merchant
       # When I visit my merchant invoice show page
