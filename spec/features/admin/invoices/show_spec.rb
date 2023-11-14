@@ -95,6 +95,6 @@ RSpec.describe "Admin Invoices Show" do
     expected_discounted_total = Invoice.total_revenue_after_discount(@test_invoice.id)
     
     expect(page).to have_content("Total Potential Revenue: $#{expected_total.round(2)}")
-    expect(page).to have_content("Total Potential Revenue After Applying Discounts: $#{expected_discounted_total}")
+    expect(page).to have_content("Total Potential Revenue After Applying Discounts: $#{expected_discounted_total.round(2)}")
   end
 end
