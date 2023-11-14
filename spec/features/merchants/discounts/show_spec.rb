@@ -31,6 +31,7 @@ RSpec.describe "MerchantDiscounts" do
       expect(page).to have_content("Quantity Threshold: #{@discount1.quantity_threshold} Items")
     end
     it "has link to edit discount" do
+      test_data_5
       # 5: Merchant Bulk Discount Edit
       # As a merchant
       # When I visit my bulk discount show page
@@ -50,17 +51,45 @@ RSpec.describe "MerchantDiscounts" do
       expect(page).to have_field('Quantity threshold', with: @discount1.quantity_threshold)
       expect(page).to have_field('Percentage discount', with: @discount1.percentage_discount)
       fill_in 'Name', with: 'Bulk Discount NATHAN'
-      fill_in 'Quantity threshold', with: 50
-      fill_in 'Percentage discount', with: 50.00
+      fill_in 'Quantity threshold', with: 70
+      fill_in 'Percentage discount', with: 70.00
       click_button("Update #{@discount1.name}")
 
       expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts/#{@discount1.id}")
       expect(page).to have_content("Discount Name: Bulk Discount NATHAN")
-      expect(page).to have_content("Percentage Discount: 50.0%")
-      expect(page).to have_content("Quantity Threshold: 50 Items")
+      expect(page).to have_content("Percentage Discount: 70.0%")
+      expect(page).to have_content("Quantity Threshold: 70 Items")
       expect(page).to_not have_content("Discount Name: #{@discount1.name}")
       expect(page).to_not have_content("Percentage Discount: #{@discount1.quantity_threshold} Items")
       expect(page).to_not have_content("Quantity Threshold: #{@discount1.percentage_discount}%")
+    end
+    it "cannot be edited if invoice is pending" do
+      test_data_5
+      #SP Extension 1
+      # When an invoice is pending,
+      # a merchant should not be able to delete or edit a bulk discount 
+      # that applies to any of their items on that invoice.
+      visit "/merchants/#{@merchant1.id}/discounts/#{@discount3.id}"
+      #invoice_item_discount belongs to an invoice_item and a discount
+      #discount has many invoice_item_discounts
+      #invoice_item has many invoice_item_discounts
+      #automatically create invoice_item_discount on invoice if criteria is met
+      #if discount.invoice_item.invoice.status == pending
+      # no link
+      # else link
+      ## OR
+      # query the all discounts, all invoices, all invoice_items
+      # case when quantity >= quantity_threshold then discount.name AS discount Applied
+      # and when invoice.status == pending
+      # select column discount applied
+      # if discount is present, then no link
+      # else link
+      expect(page).to have_content("Discount Cannot Be Edited While Invoices Are Pending")
+      expect(page).to_not have_link("Edit #{@discount3.name}")
+
+      visit "/merchants/#{@merchant1.id}/discounts/#{@discount1.id}"
+      expect(page).to_not have_content("Discount Cannot Be Edited While Invoices Are Pending")
+      expect(page).to have_link("Edit #{@discount1.name}")
     end
   end
 end

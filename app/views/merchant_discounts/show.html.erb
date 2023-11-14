@@ -2,5 +2,8 @@
 <p>Discount Name: <%= @discount.name %></p>
 <p>Percentage Discount: <%= @discount.percentage_discount %>%</p>
 <p>Quantity Threshold: <%= @discount.quantity_threshold %> Items</p>
-
-<%= link_to "Edit #{@discount.name}", edit_merchant_discount_path(@discount.merchant, @discount) %>
+<% if Discount.editable_and_deletable(@discount.name) %>
+  <%= link_to "Edit #{@discount.name}", edit_merchant_discount_path(@discount.merchant, @discount) %>
+<% else %>
+  <b><%= "Discount Cannot Be Edited While Invoices Are Pending" %></b>
+<% end %>

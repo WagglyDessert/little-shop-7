@@ -225,6 +225,27 @@ def test_data_4
   @transaction2 = create(:transaction, result: 1, invoice_id: @invoice2.id)
   @transaction3 = create(:transaction, result: 1, invoice_id: @invoice3.id)
 end
+
+def test_data_5
+  @merchant1 = Merchant.create(name: "Target")
+
+  @customer1 = Customer.create(first_name: "Jay", last_name: "Tiggy")
+
+  @discount1 = @merchant1.discounts.create(name: "Bulk Discount Z", quantity_threshold: 50000000, percentage_discount: 50.00, merchant_id: @merchant1.id)
+  @discount2 = @merchant1.discounts.create(name: "Bulk Discount B", quantity_threshold: 20, percentage_discount: 20.00, merchant_id: @merchant1.id)
+  @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 10, percentage_discount: 10.00, merchant_id: @merchant1.id)
+
+  @item1 = @merchant1.items.create(name: "hat", description: "cool hat", unit_price: 10)
+  @item1 = @merchant1.items.create(name: "cat", description: "cool cat", unit_price: 10)
+  
+  @invoice1 = @customer1.invoices.create(status: 1, customer_id: @customer1.id)
+  @invoice2 = @customer1.invoices.create(status: 0, customer_id: @customer1.id)
+
+  @invoice_item1 = InvoiceItem.create(item_id: @item1.id, invoice_id: @invoice1.id, quantity: 4, unit_price: 10, status: 2)
+  @invoice_item2 = InvoiceItem.create(item_id: @item1.id, invoice_id: @invoice2.id, quantity: 10, unit_price: 1, status: 2)
+  @invoice_item2 = InvoiceItem.create(item_id: @item2.id, invoice_id: @invoice2.id, quantity: 10, unit_price: 1, status: 2)
+
+end
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

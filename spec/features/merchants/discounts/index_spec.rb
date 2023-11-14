@@ -45,6 +45,7 @@ RSpec.describe "MerchantDiscounts" do
       expect(page).to have_content("Quantity Threshold: 30 Items")
     end
     it "has button to delete a discount" do
+      test_data_5
       # SP3: Merchant Bulk Discount Delete
       # As a merchant
       # When I visit my bulk discounts index
@@ -58,6 +59,18 @@ RSpec.describe "MerchantDiscounts" do
       expect(current_path).to eq("/merchants/#{@merchant1.id}/discounts")
       expect(page).to have_content("Bulk Discount B")
       expect(page).to_not have_content("Bulk Discount A")
+    end
+    it "cannot be deleted if invoices are pending" do
+      test_data_5
+      #SP Extension 1
+      # When an invoice is pending,
+      # a merchant should not be able to delete or edit a bulk discount 
+      # that applies to any of their items on that invoice.
+      visit "/merchants/#{@merchant1.id}/discounts"
+      expect(page).to have_button("Delete #{@discount1.name}")
+      expect(page).to have_button("Delete #{@discount2.name}")
+      expect(page).to have_content("Discount Cannot Be Deleted While Invoices Are Pending")
+      expect(page).to_not have_button("Delete #{@discount3.name}")
     end
   end
 end

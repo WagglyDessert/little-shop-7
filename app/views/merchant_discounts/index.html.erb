@@ -4,7 +4,11 @@
     <p>Percentage Discount: <%= d.percentage_discount %>%</p>
     <p>Quantity Threshold: <%= d.quantity_threshold %> Items</p>
     <p>Click Here For More Information About <%= link_to d.name, merchant_discount_path(@merchant, d) %></p>
-    <p><%= button_to "Delete #{d.name}", merchant_discount_path(@merchant, d), method: :delete %></p><br>
+    <% if Discount.editable_and_deletable(d.name) %>
+      <p><%= button_to "Delete #{d.name}", merchant_discount_path(@merchant, d), method: :delete %></p><br>
+    <% else %>
+      <p><b><%= "Discount Cannot Be Deleted While Invoices Are Pending" %></b></p><br>
+    <% end %>
   <% end %>
 
   <%= link_to "Create New Discount", new_merchant_discount_path(@merchant) %>
