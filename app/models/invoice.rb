@@ -44,7 +44,7 @@ class Invoice < ApplicationRecord
         @discounts << m.discounts
       end
     end
-    require 'pry'; binding.pry
+    #require 'pry'; binding.pry
     if @discounts != nil
       items_with_discounts = Discount
           .joins(merchant: { items: :invoice_items })
@@ -108,6 +108,6 @@ class Invoice < ApplicationRecord
     end
     total.round(2)   
   end
-
+    
 end
 

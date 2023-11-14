@@ -225,28 +225,6 @@ def test_data_4
   @transaction1 = create(:transaction, result: 1, invoice_id: @invoice1.id)
   @transaction2 = create(:transaction, result: 1, invoice_id: @invoice2.id)
   @transaction3 = create(:transaction, result: 1, invoice_id: @invoice3.id)
-
-  @item_discount1 = ItemDiscount.create(item_id: @item1.id, discount_id: @discount1.id)
-  @item_discount2 = ItemDiscount.create(item_id: @item2.id, discount_id: @discount1.id)
-  @item_discount3 = ItemDiscount.create(item_id: @item3.id, discount_id: @discount1.id)
-  @item_discount4 = ItemDiscount.create(item_id: @item4.id, discount_id: @discount1.id)
-  @item_discount5 = ItemDiscount.create(item_id: @item6.id, discount_id: @discount1.id)
-  @item_discount6 = ItemDiscount.create(item_id: @item7.id, discount_id: @discount1.id)
-  @item_discount7 = ItemDiscount.create(item_id: @item8.id, discount_id: @discount1.id)
-  @item_discount8 = ItemDiscount.create(item_id: @item1.id, discount_id: @discount2.id)
-  @item_discount9 = ItemDiscount.create(item_id: @item2.id, discount_id: @discount2.id)
-  @item_discount10 = ItemDiscount.create(item_id: @item3.id, discount_id: @discount2.id)
-  @item_discount11 = ItemDiscount.create(item_id: @item4.id, discount_id: @discount2.id)
-  @item_discount12 = ItemDiscount.create(item_id: @item6.id, discount_id: @discount2.id)
-  @item_discount13 = ItemDiscount.create(item_id: @item7.id, discount_id: @discount2.id)
-  @item_discount14 = ItemDiscount.create(item_id: @item8.id, discount_id: @discount2.id)
-  @item_discount15 = ItemDiscount.create(item_id: @item1.id, discount_id: @discount3.id)
-  @item_discount16 = ItemDiscount.create(item_id: @item2.id, discount_id: @discount3.id)
-  @item_discount17 = ItemDiscount.create(item_id: @item3.id, discount_id: @discount3.id)
-  @item_discount18 = ItemDiscount.create(item_id: @item4.id, discount_id: @discount3.id)
-  @item_discount19 = ItemDiscount.create(item_id: @item6.id, discount_id: @discount3.id)
-  @item_discount20 = ItemDiscount.create(item_id: @item7.id, discount_id: @discount3.id)
-  @item_discount21 = ItemDiscount.create(item_id: @item8.id, discount_id: @discount3.id)
 end
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
