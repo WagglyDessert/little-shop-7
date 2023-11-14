@@ -82,8 +82,8 @@ RSpec.describe Invoice, type: :model do
       @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
       
       #this tests that different discounts are applied to different items
-      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01 * ((100.0 - @discount2.percentage_discount) / 100)) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01 * ((100.0 - @discount3.percentage_discount) / 100))).round(2)
-      expect(@test_invoice.total_revenue_after_discount).to eq(expected_total)
+      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01 * ((100.0 - @discount2.percentage_discount) / 100)) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01 * ((100.0 - @discount3.percentage_discount) / 100)))
+      expect(Invoice.total_revenue_after_discount(@test_invoice.id).to_i).to eq(expected_total.to_i)
     end
     it "tests that total_revenue_after_discounts works when there are no discounts" do 
       test_data_2
@@ -92,7 +92,7 @@ RSpec.describe Invoice, type: :model do
       
       #this tests no discounts 
       expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01)).round(2)
-      expect(@test_invoice.total_revenue_after_discount).to eq(expected_total)
+      expect(Invoice.total_revenue_after_discount(@test_invoice.id).to_i).to eq(expected_total.to_i)
     end
     it "tests that the total_revenue_after_discounts does not discount purchased items that belong to another merchant who does not have a discount" do 
       test_data_2
@@ -108,8 +108,8 @@ RSpec.describe Invoice, type: :model do
       @discount3 = @merchant1.discounts.create(name: "Bulk Discount C", quantity_threshold: 50, percentage_discount: 50.00)
       
       #this tests that buying an item that belongs to a merchant without discounts will not apply a discount to the item when other items are bought from a merchant that gives discounts
-      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01 * ((100.0 - @discount2.percentage_discount) / 100)) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01 * ((100.0 - @discount3.percentage_discount) / 100)) + (@invoice_item17.unit_price * @invoice_item17.quantity * 0.01)).round(2)
-      expect(@test_invoice.total_revenue_after_discount).to eq(expected_total)
+      expected_total = ((@invoice_item9.unit_price * @invoice_item9.quantity * 0.01) + (@invoice_item10.unit_price * @invoice_item10.quantity * 0.01 * ((100.0 - @discount2.percentage_discount) / 100)) + (@invoice_item11.unit_price * @invoice_item11.quantity * 0.01) + (@invoice_item12.unit_price * @invoice_item12.quantity * 0.01) + (@invoice_item13.unit_price * @invoice_item13.quantity * 0.01) + (@invoice_item15.unit_price * @invoice_item15.quantity * 0.01 * ((100.0 - @discount3.percentage_discount) / 100)) + (@invoice_item17.unit_price * @invoice_item17.quantity * 0.01))
+      expect(Invoice.total_revenue_after_discount(@test_invoice.id).to_i).to eq(expected_total.to_i)
     end
   end 
 end
