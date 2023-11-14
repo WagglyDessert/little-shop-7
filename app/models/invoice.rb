@@ -112,7 +112,8 @@ class Invoice < ApplicationRecord
     total.to_f.round(2)
   end
 
-  # def total_revenue_after_discount
+  #IM LEAVING THIS METHOD TO SHOW YOU MY AR STRUGGLES
+  # def total_revenue_after_discount_2
   #   @merchant_array = []
   #   @discounts = []
   #   items.each do |i|
@@ -153,40 +154,40 @@ class Invoice < ApplicationRecord
   # end
 
   #IM LEAVING THIS METHOD TO SHOW ALTERNATE SOLUTION
-  def total_revenue_after_discount_2
-    total = 0.00
-    invoice_items.each do |ii|
-      #reset number_d and number
-      @number_d = 0
-      @number = 0
-      @merchant = ii.item.merchant
-      if @merchant.discounts.present?
-        # sort discounts from lowest discount to highest
-        # @merchant.discounts.sort_by(percentage_discount)
-        @discounts = @merchant.discounts.sort_by(&:percentage_discount)
-        # discounts.each do
-        @discounts.each do |discount|
-          # if (invoice_item.quantity) > discount.quantity_threshold
-          if ii.quantity >= discount.quantity_threshold
-          # number = invoice_items.sum("unit_price * quantity * #{discount.percentage_discount}").round(2)
-            @number_d = (ii.unit_price * ii.quantity * 0.01 * ((100.0 - discount.percentage_discount) / 100))
-          else
-            @number = (ii.unit_price * ii.quantity * 0.01)
-          end
-        end
-        if @number_d != 0
-          total += @number_d
-        else
-          total += @number
-        end
-      # if merchant doesn't have any discounts, call on potential_revenue method
-      else
-        @number = (ii.unit_price * ii.quantity * 0.01)
-        total += @number
-      end
-    end
-    total.round(2)   
-  end
+  # def total_revenue_after_discount_3
+  #   total = 0.00
+  #   invoice_items.each do |ii|
+  #     #reset number_d and number
+  #     @number_d = 0
+  #     @number = 0
+  #     @merchant = ii.item.merchant
+  #     if @merchant.discounts.present?
+  #       # sort discounts from lowest discount to highest
+  #       # @merchant.discounts.sort_by(percentage_discount)
+  #       @discounts = @merchant.discounts.sort_by(&:percentage_discount)
+  #       # discounts.each do
+  #       @discounts.each do |discount|
+  #         # if (invoice_item.quantity) > discount.quantity_threshold
+  #         if ii.quantity >= discount.quantity_threshold
+  #         # number = invoice_items.sum("unit_price * quantity * #{discount.percentage_discount}").round(2)
+  #           @number_d = (ii.unit_price * ii.quantity * 0.01 * ((100.0 - discount.percentage_discount) / 100))
+  #         else
+  #           @number = (ii.unit_price * ii.quantity * 0.01)
+  #         end
+  #       end
+  #       if @number_d != 0
+  #         total += @number_d
+  #       else
+  #         total += @number
+  #       end
+  #     # if merchant doesn't have any discounts, call on potential_revenue method
+  #     else
+  #       @number = (ii.unit_price * ii.quantity * 0.01)
+  #       total += @number
+  #     end
+  #   end
+  #   total.round(2)   
+  # end
     
 end
 
