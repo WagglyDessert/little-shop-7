@@ -33,6 +33,85 @@ class Invoice < ApplicationRecord
     Invoice.all.order(created_at: :desc)
   end
   
+  def self.total_revenue_after_discount(invoice_id)
+    total = 0.00
+    @merchant_array = []
+    @discounts = []
+    Invoice.find(invoice_id).items.each do |i|
+      @merchant_array << i.merchant
+    end
+    @merchant_array.uniq.each do |m|
+      if m.discounts.present?
+        @discounts << m.discounts
+      end
+    end
+    if @discounts != []
+      result = Invoice.find_by_sql([
+      "SELECT 
+      SUM(max_discount_calculation) AS total_discount
+      FROM (
+      SELECT 
+        invoice_items.item_id,
+        MIN(CASE 
+                WHEN invoice_items.quantity >= discounts.quantity_threshold THEN
+                    invoice_items.quantity * items.unit_price * 0.01 * ((100 - discounts.percentage_discount) / 100)
+                ELSE 
+                    0
+            END) AS max_discount_calculation
+      FROM 
+        items
+        INNER JOIN invoice_items ON items.id = invoice_items.item_id
+        INNER JOIN merchants ON merchants.id = items.merchant_id
+        INNER JOIN discounts ON discounts.merchant_id = merchants.id
+      WHERE 
+        invoice_items.invoice_id = #{invoice_id}
+        AND invoice_items.quantity >= discounts.quantity_threshold
+      GROUP BY 
+        invoice_items.item_id
+      ) AS subquery"
+      ])
+      total += result.pluck(:total_discount).first
+    
+      no_discount_result = Invoice.find_by_sql([
+      "SELECT 
+      SUM(min_discount) AS total_min_discount
+      FROM (
+      SELECT 
+        invoice_items.item_id, 
+        MIN(
+            CASE 
+                WHEN invoice_items.quantity < discounts.quantity_threshold 
+                THEN invoice_items.quantity * items.unit_price * 0.01
+                ELSE 0
+            END
+        ) AS min_discount
+      FROM 
+        items
+        INNER JOIN invoice_items ON items.id = invoice_items.item_id
+        INNER JOIN merchants ON merchants.id = items.merchant_id
+        INNER JOIN discounts ON discounts.merchant_id = merchants.id
+      WHERE 
+        invoice_items.invoice_id = #{invoice_id}
+      GROUP BY 
+        invoice_items.item_id
+      ) AS min_discounts_summary;"
+      ])
+      total += no_discount_result.pluck(:total_min_discount).first
+
+      Invoice.find(invoice_id).invoice_items.each do |ii|
+        if ii.item.merchant.discounts == []
+          total += ii.quantity * ii.unit_price * 0.01
+        end
+      end
+
+    else 
+      Invoice.find(invoice_id).invoice_items.each do |ii|
+        total += ii.quantity * ii.unit_price * 0.01
+      end
+    end
+    total.to_f.round(2)
+  end
+
   # def total_revenue_after_discount
   #   @merchant_array = []
   #   @discounts = []
@@ -73,7 +152,8 @@ class Invoice < ApplicationRecord
   #   end
   # end
 
-  def total_revenue_after_discount
+  #IM LEAVING THIS METHOD TO SHOW ALTERNATE SOLUTION
+  def total_revenue_after_discount_2
     total = 0.00
     invoice_items.each do |ii|
       #reset number_d and number
@@ -107,6 +187,6 @@ class Invoice < ApplicationRecord
     end
     total.round(2)   
   end
-
+    
 end
 
